@@ -15,18 +15,13 @@ def draw(colorNote,last):
     global indicator,board
     beatsPerIndicator=20
     
-    
-    if indicator<beatsPerIndicator:
-        ind="["+"-"*indicator+"#"+"-"*(beatsPerIndicator-indicator)+"]"
-    else:
-        ind="["+"-"*(beatsPerIndicator-(indicator-beatsPerIndicator))+"#"+"-"*(indicator-beatsPerIndicator)+"]"
     dirs[colorNote["x"]][colorNote["y"]]=colorNote["d"]
     if colorNote["b"]-last["b"]<60/bpm/256:
         indicator=(indicator+1)%(beatsPerIndicator*2) 
-        ind+=" " + ["#-","##","-#"][last["c"]+colorNote["c"]]+" "
+
         board[colorNote["x"]][colorNote["y"]]=colorNote["c"]+1
     else:
-        ind+=" " + ["#-","-#"][colorNote["c"]]+" "
+
         board=[[0 for i in range(4)] for i in range(4)]
         board[colorNote["x"]][colorNote["y"]]=colorNote["c"]+1
     
@@ -53,7 +48,7 @@ def draw(colorNote,last):
         if i.type==pygame.QUIT:
             exit()
     screen.fill((0,0,0))
-    grid=11c
+    grid=1
     if grid:
         #draw grid
         for i in range(5):
@@ -84,19 +79,19 @@ def draw(colorNote,last):
                     pygame.draw.polygon(screen,(255,255,255),((x+50,y+50),(x,y),(x,y+100)))
                 elif dir==4:
                     #upleft
-                    pygame.draw.polygon(screen,(255,255,255),((x+25,y+25),(x+50,y+100),(x+100,y+50)))
+                    pygame.draw.polygon(screen,(255,255,255),((x+25,y+25),(x+25,y+100),(x+100,y+25)))
                 elif dir==5:
                     #upright
-                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+25),(x+50,y+100),(x,y+50)))
+                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+25),(x+75,y+100),(x,y+25)))
                 elif dir==6:
                     #downleft
-                    pygame.draw.polygon(screen,(255,255,255),((x+25,y+75),(x+50,y),(x+100,y+50)))
+                    pygame.draw.polygon(screen,(255,255,255),((x+25,y+75),(x+25,y),(x+100,y+75)))
                 elif dir==7:
                     #downright
-                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+75),(x+50,y),(x,y+50)))
+                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+75),(x+50,y),(x,y+75)))
                 elif dir==8:
                     #center
-                    pygame.draw.circle(screen,(255,255,255),(x+50,y+50),10)
+                    pygame.draw.circle(screen,(255,255,255),(x+50,y+50),20)
     pygame.display.flip()
     
     
