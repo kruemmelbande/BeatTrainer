@@ -130,7 +130,7 @@ dmypy.json
 beatmap/*
 devmode.txt
 temp.txt
-
+beatmap.*
 
 
 ```
