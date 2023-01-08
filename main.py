@@ -88,7 +88,7 @@ def draw(colorNote,last):
                     pygame.draw.polygon(screen,(255,255,255),((x+25,y+75),(x+25,y),(x+100,y+75)))
                 elif dir==7:
                     #downright
-                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+75),(x+50,y),(x,y+75)))
+                    pygame.draw.polygon(screen,(255,255,255),((x+75,y+75),(x+75,y),(x,y+75)))
                 elif dir==8:
                     #center
                     pygame.draw.circle(screen,(255,255,255),(x+50,y+50),20)
