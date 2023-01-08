@@ -1,3 +1,5 @@
+print("V0.0.1")
+print("This is just a test, so dont expect anything to work well")
 import time, pygame,json
 pygame.init()
 pygame.mixer.init()
@@ -56,7 +58,7 @@ pygame.mixer.music.play()
 #start the map
 starttime=time.time()
 last=beatmap["colorNotes"][0]
-print(last)
+
 for i in beatmap["colorNotes"]:
     t=i["b"]
     seconds=t*60/bpm
@@ -64,6 +66,7 @@ for i in beatmap["colorNotes"]:
         time.sleep(starttime+seconds-time.time())
     draw(i,last)
     last=i
-    
+while pygame.mixer.music.get_busy():
+    time.sleep(0.1)
 print("Done!")
     
