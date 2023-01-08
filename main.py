@@ -1,7 +1,9 @@
 print("V0.0.1")
 print("This is just a test, so dont expect anything to work well")
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
-import time, pygame,json
+import time, pygame,json, sys
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((400, 300))
@@ -11,6 +13,9 @@ dirs=[[0 for i in range(4)] for i in range(4)]
 def printInColor(text,color):
     print("\033[38;2;"+str(color[0])+";"+str(color[1])+";"+str(color[2])+"m"+text+"\033[0m",end="")
 
+def moveCursor(lines):
+   sys.stdout.write(f"\x1b[{lines}A")
+print("                           \n"*5)
 def draw(colorNote,last):
     global indicator,board
     beatsPerIndicator=20
@@ -27,7 +32,7 @@ def draw(colorNote,last):
     
     #draw the board in the console
         
-    print("\n"*10)
+    moveCursor(5)
     print("##########")
     for j in range(2,-1,-1):
         print("#",end="")
