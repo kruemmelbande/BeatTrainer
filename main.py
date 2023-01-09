@@ -106,11 +106,14 @@ if __name__ == "__main__":
         beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
         musicfile=info["_songFilename"]
         bpm=info["_beatsPerMinute"]
+        #set the captiom
+        pygame.display.set_caption(info["_songName"]+" - "+info["_songAuthorName"])
         with open("beatmap/"+beatfile,"r") as f:
             beatmap = json.load(f)
         #print(beatmap)
     except Exception as e:
         print("Error: Info.dat not found (did you add a beatmap?)")
+        exit()
     try:
         v=beatmap["version"]
     except:
@@ -145,7 +148,9 @@ if __name__ == "__main__":
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play()
     except:
-        print("Audio disabled due to error.")
+        print("Audio disabled due to error.", end="\r")
+        time.sleep(2)
+        print("                            ", end="")
     #start the map
     starttime=time.time()
     last=beatmap["colorNotes"][0]
