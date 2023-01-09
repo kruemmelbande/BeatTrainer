@@ -1,4 +1,4 @@
-print("V0.0.1")
+print("V0.0.2")
 print("This is just a test, so dont expect anything to work well")
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -110,6 +110,24 @@ if __name__ == "__main__":
         pygame.display.set_caption(info["_songName"]+" - "+info["_songAuthorName"])
         with open("beatmap/"+beatfile,"r") as f:
             beatmap = json.load(f)
+        #just for development purposes, we are gonna store the beatmap
+        #in a temporary file, which will be indented correctly, so its
+        #understandable and can be developed with, cuz im not reading the docs.
+        devmode=False
+        try:
+            with open("devmode.txt","r") as f:
+                devmode = f.read()
+            if devmode.strip().lower() == "true":
+                devmode = True
+            else:
+                devmode=False
+        except:
+            pass
+        if devmode:
+            print("Devmode enabled")
+            with open("temp.txt","w") as f:
+                json.dump(beatmap,f,indent=4)
+                
         #print(beatmap)
     except Exception as e:
         print("Error: Info.dat not found (did you add a beatmap?)")
@@ -120,25 +138,11 @@ if __name__ == "__main__":
         v=beatmap["_version"]
     if v.startswith("2."):
         print("To use v2 beatmaps, please use the v2tov3 coverter included.")
-    #just for development purposes, we are gonna store the beatmap
-    #in a temporary file, which will be indented correctly, so its
-    #understandable and can be developed with, cuz im not reading the docs.
-    devmode=False
+        exit()
+
     indicator=0
-    try:
-        with open("devmode.txt","r") as f:
-            devmode = f.read()
-        if devmode.strip().lower() == "true":
-            devmode = True
-        else:
-            devmode=False
-    except:
-        pass
-    if devmode:
-        print("Devmode enabled")
-        with open("temp.txt","w") as f:
-            json.dump(beatmap,f,indent=4)
-            
+
+  
     #load the music
     try:
         

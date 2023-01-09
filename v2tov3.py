@@ -18,6 +18,10 @@ def convert(map):
             note["c"]=1
         else:
             continue
+        if "_customData" in i:
+            if "_fake" in i["_customData"]:
+                if i["_customData"]["_fake"]:
+                    continue
         newNotes.append(note)	
     newMap={
         "version":"3.0.0",

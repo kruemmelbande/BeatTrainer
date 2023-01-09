@@ -131,6 +131,6 @@ beatmap/*
 devmode.txt
 temp.txt
 beatmap.*
-
+!beatmap/PlaceYourBeatmapHere
 
 ```
