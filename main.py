@@ -5,7 +5,6 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 import time, pygame,json, sys
 pygame.init()
-pygame.mixer.init()
 screen = pygame.display.set_mode((400, 300))
 size = width, height = 400, 300
 board=[[0 for i in range(4)] for i in range(4)]
@@ -112,8 +111,11 @@ if __name__ == "__main__":
         #print(beatmap)
     except Exception as e:
         print("Error: Info.dat not found (did you add a beatmap?)")
-        
-    if beatmap["version"].startswith("2."):
+    try:
+        v=beatmap["version"]
+    except:
+        v=beatmap["_version"]
+    if v.startswith("2."):
         print("To use v2 beatmaps, please use the v2tov3 coverter included.")
     #just for development purposes, we are gonna store the beatmap
     #in a temporary file, which will be indented correctly, so its
@@ -135,10 +137,15 @@ if __name__ == "__main__":
             json.dump(beatmap,f,indent=4)
             
     #load the music
-    pygame.mixer.music.load("beatmap/"+musicfile)
-    #set the volume
-    pygame.mixer.music.set_volume(0.05)
-    pygame.mixer.music.play()
+    try:
+        
+        pygame.mixer.init()
+        pygame.mixer.music.load("beatmap/"+musicfile)
+        #set the volume
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+    except:
+        print("Audio disabled due to error.")
     #start the map
     starttime=time.time()
     last=beatmap["colorNotes"][0]
