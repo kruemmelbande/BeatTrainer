@@ -1,6 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog, PhotoImage
-from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail
+from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path
+
+from beatPlayer import play
+
+def playBeatmap():
+    play(get_current_file_path(), difficulty=difficulty_var.get())
 
 def on_load_button_click():
     global img_label
@@ -18,6 +23,7 @@ def on_load_button_click():
 
         convert_button['state'] = 'normal'
         clear_button['state'] = 'normal'
+        play_button['state'] = 'normal'
         img = getThumbnail()
         #show the image
         img_label = tk.Label(root, image=img)
@@ -43,6 +49,7 @@ def on_clear_button_click():
     difficulty_menu['menu'].delete(0, 'end')
     convert_button['state'] = 'disable'
     clear_button['state'] = 'disable'
+    play_button['state'] = 'disable'
     beatmap_label.config(text="No beatmap loaded")
 
 root = tk.Tk()
@@ -67,5 +74,9 @@ convert_button['state'] = 'disable'
 clear_button = tk.Button(root, text="Clear", command=on_clear_button_click)
 clear_button.grid(row=4, column=0,sticky='W')
 clear_button['state'] = 'disable'
+
+play_button = tk.Button(root, text="Preview Beatmap", command=playBeatmap)
+play_button.grid(row=5, column=0,sticky='W')
+play_button['state'] = 'disable'
 
 root.mainloop()

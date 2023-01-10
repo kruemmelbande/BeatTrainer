@@ -1,11 +1,11 @@
-print("V0.0.2")
-print("This is just a test, so dont expect anything to work well")
+#print("V0.0.2")
+#print("This is just a test, so dont expect anything to work well")
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
+from v2tov3 import convert
 import time, pygame,json, sys
-pygame.init()
-screen = pygame.display.set_mode((400, 300))
+
 size = width, height = 400, 300
 board=[[0 for i in range(4)] for i in range(4)]
 dirs=[[0 for i in range(4)] for i in range(4)]
@@ -14,9 +14,9 @@ def printInColor(text,color):
 
 def moveCursor(lines):
    sys.stdout.write(f"\x1b[{lines}A")
-print("                           \n"*5)
-def draw(colorNote,last):
-    global indicator,board
+
+def draw(colorNote,last, consoleversion=False):
+    global indicator,board, bpm
     beatsPerIndicator=20
     
     dirs[colorNote["x"]][colorNote["y"]]=colorNote["d"]
@@ -29,28 +29,26 @@ def draw(colorNote,last):
         board=[[0 for i in range(4)] for i in range(4)]
         board[colorNote["x"]][colorNote["y"]]=colorNote["c"]+1
     
-    #draw the board in the console
+    if consoleversion:
+        #draw the board in the console
         
-    moveCursor(5)
-    print("##########")
-    for j in range(2,-1,-1):
-        print("#",end="")
-        for i in range(4):
-            if board[i][j]==1:
-                printInColor("██",(255,0,0))
-            elif board[i][j]==2:
-                printInColor("██",(0,0,255))
-            
-            else:
-                print("[]",end="")
-        print("#")
-    print("##########")
+        moveCursor(5)
+        print("##########")
+        for j in range(2,-1,-1):
+            print("#",end="")
+            for i in range(4):
+                if board[i][j]==1:
+                    printInColor("██",(255,0,0))
+                elif board[i][j]==2:
+                    printInColor("██",(0,0,255))
+                
+                else:
+                    print("[]",end="")
+            print("#")
+        print("##########")
     #print(ind,end="\r")
     #draw the board in pygame
-    e=pygame.event.get()
-    for i in e:
-        if i.type==pygame.QUIT:
-            exit()
+            
     screen.fill((0,0,0))
     grid=1
     if grid:
@@ -98,17 +96,25 @@ def draw(colorNote,last):
                     pygame.draw.circle(screen,(255,255,255),(x+50,y+50),20)
     pygame.display.flip()
     
-    
-if __name__ == "__main__":
+def play(path, consoleversion=False, difficulty=0):
+    global beatfile, musicfile, bpm, indicator, screen
+    pygame.init()
+    screen = pygame.display.set_mode((400, 300))
     try:
-        with open("beatmap/Info.dat","r") as f:
+        with open(path+"/Info.dat","r") as f:
             info = json.load(f)
-        beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
+        if difficulty==0:
+            beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
+        else:
+            for i in info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]:
+                if i["_difficulty"]==difficulty:
+                    beatfile=i["_beatmapFilename"]
+                    break
         musicfile=info["_songFilename"]
         bpm=info["_beatsPerMinute"]
         #set the captiom
         pygame.display.set_caption(info["_songName"]+" - "+info["_songAuthorName"])
-        with open("beatmap/"+beatfile,"r") as f:
+        with open(path+"/"+beatfile,"r") as f:
             beatmap = json.load(f)
         #just for development purposes, we are gonna store the beatmap
         #in a temporary file, which will be indented correctly, so its
@@ -137,8 +143,7 @@ if __name__ == "__main__":
     except:
         v=beatmap["_version"]
     if v.startswith("2."):
-        print("To use v2 beatmaps, please use the v2tov3 coverter included.")
-        exit()
+        beatmap=convert(beatmap)
 
     indicator=0
 
@@ -147,7 +152,7 @@ if __name__ == "__main__":
     try:
         
         pygame.mixer.init()
-        pygame.mixer.music.load("beatmap/"+musicfile)
+        pygame.mixer.music.load(path+"/"+musicfile)
         #set the volume
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play()
@@ -162,6 +167,12 @@ if __name__ == "__main__":
     for i in beatmap["colorNotes"]:
         t=i["b"]
         seconds=t*60/bpm
+        e=pygame.event.get()
+        for f in e:
+            if f.type==pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                return
         if starttime+seconds>time.time():
             time.sleep(starttime+seconds-time.time())
         draw(i,last)
@@ -170,3 +181,5 @@ if __name__ == "__main__":
         time.sleep(0.1)
     print("\nDone!")
         
+if __name__ == "__main__":
+    play("beatmap")

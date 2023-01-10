@@ -10,6 +10,10 @@ def makeCopy(list):
         newList[i]=list[i]
     return newList
 
+def get_current_file_path():
+    global path
+    return path
+
 def getThumbnail():
     global thumnail
     try:
@@ -27,8 +31,9 @@ def getBeatmapName():
         return "No beatmap loaded"
 def loadbeatmap(filepath):
     try:
-        global beemaps,info,song,cover, thumbnail
+        global beemaps,info,song,cover, thumbnail, path
         beemaps={}
+        path=filepath
         with open(filepath+"/Info.dat","r") as f:
             info=json.load(f)
         #print(json.dumps(info,indent=4))
