@@ -68,18 +68,20 @@ def convertLoaded(difficulty,saveLocation):
     easyLevel=makeCopy(ogInfo)
     easyLevel["_difficulty"]="Easy"
     easyLevel["_difficultyRank"]=1
-    easyLevel["_beatmapFilename"]="Easy.dat"
+    easyLevel["_beatmapFilename"]="StandartEasy.dat"
     normalLevel=makeCopy(ogInfo)
     normalLevel["_difficulty"]="Normal"
     normalLevel["_difficultyRank"]=3
-    newInfo["_difficultyBeatmapSets"]={}
-    newInfo["_difficultyBeatmapSets"]["_beatmapCharacteristicName"]="Standard"
-    newInfo["_difficultyBeatmapSets"]["_difficultyBeatmaps"]=[easyLevel,normalLevel]
+    normalLevel["_beatmapFilename"]="StandartNormal.dat"
+    newInfo["_difficultyBeatmapSets"]=[{}]
+    newInfo["_difficultyBeatmapSets"][0]["_beatmapCharacteristicName"]="Standard"
+    newInfo["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]=[easyLevel,normalLevel]
+    newInfo["_songSubName"]="(training edition)"
     try:
         #delete all existing files
         os.remove(saveLocation+"/Info.dat")
-        os.remove(saveLocation+"/Easy.dat")
-        os.remove(saveLocation+"/Normal.dat")
+        os.remove(saveLocation+"/StandartEasy.dat")
+        os.remove(saveLocation+"/StandartNormal.dat")
         os.remove(saveLocation+"/"+newInfo["_songFilename"])
         os.remove(saveLocation+"/"+newInfo["_coverImageFilename"])
     except:
@@ -89,10 +91,10 @@ def convertLoaded(difficulty,saveLocation):
     except:
         pass
     with open(saveLocation+"/Info.dat","w") as f:
-        json.dump(newInfo,f)
-    with open(saveLocation+"/Easy.dat","w") as f:
+        json.dump(newInfo,f,indent=2)
+    with open(saveLocation+"/StandartEasy.dat","w") as f:
         json.dump(easy,f)
-    with open(saveLocation+"/Normal.dat","w") as f:
+    with open(saveLocation+"/StandartNormal.dat","w") as f:
         json.dump(normal,f)
     with open(saveLocation+"/"+newInfo["_songFilename"], "wb") as f:
         f.write(song.read())

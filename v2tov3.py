@@ -1,4 +1,6 @@
 import json
+
+
 def convert(map):
     notes=map["_notes"]
     #sliders obstacles bombs and waypoints are not supported at this time
@@ -22,18 +24,44 @@ def convert(map):
             if "_fake" in i["_customData"]:
                 if i["_customData"]["_fake"]:
                     continue
-        newNotes.append(note)	
+        newNotes.append(note)
+    oldObstacles=map["_obstacles"]
+    obstacles=[]
+    for i in oldObstacles:
+        ob={
+            "b": i["_time"],
+            "x": i["_lineIndex"],
+            "y": 0 if["_type"]==0 else 2,
+            "d": i["_duration"],
+            "w": i["_width"],
+            "h": 5 - (0 if["_type"]==0 else 2)
+        }
+        obstacles.append(ob)
+    lights=[]
+    for i in map["_events"]:
+        
+        li={
+            "b": i["_time"],
+            "et": i["_type"],
+            "i": i["_value"],
+            "f": 1
+        }
+        try:
+            li["f"]= i["_floatValue"]
+        except:
+            pass
+        lights.append(li)
     newMap={
         "version":"3.0.0",
         "bpmEvents": [],
         "rotationEvents": [],
         "colorNotes": newNotes,
         "bombNotes": [],
-        "obstacles": [],
+        "obstacles": obstacles,
         "sliders": [],
         "burstSliders": [],
         "waypoints": [],
-        "basicBeatmapEvents": [],
+        "basicBeatmapEvents": lights,
         "colorBoostBeatmapEvents": [],
         "lightColorEventBoxGroups": [],
         "lightRotationEventBoxGroups": [],
@@ -55,6 +83,6 @@ if __name__=="__main__":
                 continue
         with open("beatmap/"+i["_beatmapFilename"],"w") as f:
             #print(convert(map))
-            json.dump(convert(map),f,indent=4)
+            json.dump(convert(map),f,separators=(',', ':'))
         
 print("done")
