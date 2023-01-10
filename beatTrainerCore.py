@@ -37,6 +37,10 @@ def loadbeatmap(filepath):
         with open(filepath+"/Info.dat","r") as f:
             info=json.load(f)
         #print(json.dumps(info,indent=4))
+        for i in info["_difficultyBeatmapSets"]:
+            if i["_beatmapCharacteristicName"]=="Standard":
+                info["_difficultyBeatmapSets"]=[i]
+                break
         for i in info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]:
             with open(filepath+"/"+i["_beatmapFilename"],"r") as f:
                 beemaps[str(i["_difficulty"])]=json.load(f)
@@ -127,7 +131,7 @@ def convertLoaded(difficulty,saveLocation):
             f.write(song.read())
         with open(saveLocation+"/"+newInfo["_coverImageFilename"], "wb") as f:
             f.write(cover.read())
-        print("Done!")
+
         return 0
     except:
         return 1

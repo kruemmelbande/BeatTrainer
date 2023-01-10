@@ -103,6 +103,10 @@ def play(path, consoleversion=False, difficulty=0):
     try:
         with open(path+"/Info.dat","r") as f:
             info = json.load(f)
+        for i in info["_difficultyBeatmapSets"]:
+            if i["_beatmapCharacteristicName"]=="Standard":
+                info["_difficultyBeatmapSets"]=[i]
+                break
         if difficulty==0:
             beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
         else:
@@ -137,13 +141,16 @@ def play(path, consoleversion=False, difficulty=0):
         #print(beatmap)
     except Exception as e:
         print("Error: Info.dat not found (did you add a beatmap?)")
-        exit()
+        print(path+"/"+beatfile)
+        return
     try:
         v=beatmap["version"]
     except:
         v=beatmap["_version"]
     if v.startswith("2."):
         beatmap=convert(beatmap)
+        print("Updated beatmap to version 3.0.0")
+        print(len(beatmap["colorNotes"]),"notes found")
 
     indicator=0
 
@@ -179,7 +186,10 @@ def play(path, consoleversion=False, difficulty=0):
         last=i
     while pygame.mixer.music.get_busy():
         time.sleep(0.1)
-    print("\nDone!")
+    pygame.mixer.music.stop()
+    pygame.quit()
+    return
+
         
 if __name__ == "__main__":
     play("beatmap")
