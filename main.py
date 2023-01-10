@@ -10,7 +10,7 @@ size = width, height = 400, 300
 board=[[0 for i in range(4)] for i in range(4)]
 dirs=[[0 for i in range(4)] for i in range(4)]
 def printInColor(text,color):
-    print("\033[38;2;"+str(co2lor[0])+";"+str(color[1])+";"+str(color[2])+"m"+text+"\033[0m",end="")
+    print("\033[38;2;"+str(color[0])+";"+str(color[1])+";"+str(color[2])+"m"+text+"\033[0m",end="")
 
 def moveCursor(lines):
    sys.stdout.write(f"\x1b[{lines}A")

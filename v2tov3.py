@@ -41,20 +41,20 @@ def convert(map):
         "useNormalEventsAsCompatibleEvents": False
     }
     return newMap
-
-with open("beatmap/Info.dat","r") as f:
-    info = json.load(f)
-beatmaps=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]
-for i in beatmaps:
-    print(i["_beatmapFilename"])
-    with open("beatmap/"+i["_beatmapFilename"],"r") as f:
-        print("beatmap/"+i["_beatmapFilename"])
-        try:
-            map=json.load(f)
-        except:
-            continue
-    with open("beatmap/"+i["_beatmapFilename"],"w") as f:
-        #print(convert(map))
-        json.dump(convert(map),f,indent=4)
-    
+if __name__=="__main__":
+    with open("beatmap/Info.dat","r") as f:
+        info = json.load(f)
+    beatmaps=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]
+    for i in beatmaps:
+        print(i["_beatmapFilename"])
+        with open("beatmap/"+i["_beatmapFilename"],"r") as f:
+            print("beatmap/"+i["_beatmapFilename"])
+            try:
+                map=json.load(f)
+            except:
+                continue
+        with open("beatmap/"+i["_beatmapFilename"],"w") as f:
+            #print(convert(map))
+            json.dump(convert(map),f,indent=4)
+        
 print("done")
