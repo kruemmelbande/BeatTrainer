@@ -9,6 +9,7 @@ import time, pygame,json, sys
 size = width, height = 400, 300
 board=[[0 for i in range(4)] for i in range(4)]
 dirs=[[0 for i in range(4)] for i in range(4)]
+volume=0.1
 
 def pyUpdate():
     e=pygame.event.get()
@@ -171,7 +172,7 @@ def play(path, consoleversion=False, difficulty=0):
             pygame.mixer.init()
             pygame.mixer.music.load(path+"/"+musicfile)
             #set the volume
-            pygame.mixer.music.set_volume(0.05)
+            pygame.mixer.music.set_volume(volume)
             pygame.mixer.music.play()
         except:
             print("Audio disabled due to error.", end="\r")
@@ -184,6 +185,7 @@ def play(path, consoleversion=False, difficulty=0):
         for i in beatmap["colorNotes"]:
             t=i["b"]
             seconds=t*60/bpm
+            pygame.mixer.music.set_volume(volume)
             while starttime+seconds-1>time.time():
                 time.sleep(0.1)
                 if pyUpdate():

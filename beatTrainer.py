@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, PhotoImage
+from tkinter import filedialog, Scale
 from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path
 
 from beatPlayer import play
@@ -55,6 +55,7 @@ def on_clear_button_click():
 root = tk.Tk()
 root.title("BeatTrainer")
 root.geometry("300x300")
+root.resizable(False, False)
 root.columnconfigure(0, minsize=50, pad=10)
 root.rowconfigure(0, minsize=50, pad=10)
 load_button = tk.Button(root, text="Load Beatmap", command=on_load_button_click)

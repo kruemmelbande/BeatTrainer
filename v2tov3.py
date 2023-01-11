@@ -92,4 +92,4 @@ if __name__=="__main__":
             #print(convert(map))
             json.dump(convert(map),f,separators=(',', ':'))
         
-print("done")
+    print("done")

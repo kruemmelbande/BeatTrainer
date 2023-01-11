@@ -26,7 +26,7 @@ def getThumbnail():
 def getBeatmapName():
     global info
     try:
-        return str(info["_songName"])
+        return str(info["_songName"]+"\n"+info["_songSubName"]+"\n"+info["_songAuthorName"]+"\n"+info["_levelAuthorName"])
     except:
         return "No beatmap loaded"
 def loadbeatmap(filepath):
