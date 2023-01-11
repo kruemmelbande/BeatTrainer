@@ -9,6 +9,15 @@ import time, pygame,json, sys
 size = width, height = 400, 300
 board=[[0 for i in range(4)] for i in range(4)]
 dirs=[[0 for i in range(4)] for i in range(4)]
+
+def pyUpdate():
+    e=pygame.event.get()
+    for f in e:
+        if f.type==pygame.QUIT:
+            pygame.mixer.music.stop()
+            pygame.quit()
+            return 1
+    return 0
 def printInColor(text,color):
     print("\033[38;2;"+str(color[0])+";"+str(color[1])+";"+str(color[2])+"m"+text+"\033[0m",end="")
 
@@ -97,99 +106,103 @@ def draw(colorNote,last, consoleversion=False):
     pygame.display.flip()
     
 def play(path, consoleversion=False, difficulty=0):
-    global beatfile, musicfile, bpm, indicator, screen
-    pygame.init()
-    screen = pygame.display.set_mode((400, 300))
     try:
-        with open(path+"/Info.dat","r") as f:
-            info = json.load(f)
-        for i in info["_difficultyBeatmapSets"]:
-            if i["_beatmapCharacteristicName"]=="Standard":
-                info["_difficultyBeatmapSets"]=[i]
-                break
-        if difficulty==0:
-            beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
-        else:
-            for i in info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]:
-                if i["_difficulty"]==difficulty:
-                    beatfile=i["_beatmapFilename"]
-                    break
-        musicfile=info["_songFilename"]
-        bpm=info["_beatsPerMinute"]
-        #set the captiom
-        pygame.display.set_caption(info["_songName"]+" - "+info["_songAuthorName"])
-        with open(path+"/"+beatfile,"r") as f:
-            beatmap = json.load(f)
-        #just for development purposes, we are gonna store the beatmap
-        #in a temporary file, which will be indented correctly, so its
-        #understandable and can be developed with, cuz im not reading the docs.
-        devmode=False
+        global beatfile, musicfile, bpm, indicator, screen
+        pygame.init()
+        screen = pygame.display.set_mode((400, 300))
         try:
-            with open("devmode.txt","r") as f:
-                devmode = f.read()
-            if devmode.strip().lower() == "true":
-                devmode = True
+            with open(path+"/Info.dat","r") as f:
+                info = json.load(f)
+            for i in info["_difficultyBeatmapSets"]:
+                if i["_beatmapCharacteristicName"]=="Standard":
+                    info["_difficultyBeatmapSets"]=[i]
+                    break
+            if difficulty==0:
+                beatfile=info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"][0]["_beatmapFilename"]
             else:
-                devmode=False
+                for i in info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]:
+                    if i["_difficulty"]==difficulty:
+                        beatfile=i["_beatmapFilename"]
+                        break
+            musicfile=info["_songFilename"]
+            bpm=info["_beatsPerMinute"]
+            #set the captiom
+            pygame.display.set_caption(info["_songName"]+" - "+info["_songAuthorName"])
+            with open(path+"/"+beatfile,"r") as f:
+                beatmap = json.load(f)
+            #just for development purposes, we are gonna store the beatmap
+            #in a temporary file, which will be indented correctly, so its
+            #understandable and can be developed with, cuz im not reading the docs.
+            devmode=False
+            try:
+                with open("devmode.txt","r") as f:
+                    devmode = f.read()
+                if devmode.strip().lower() == "true":
+                    devmode = True
+                else:
+                    devmode=False
+            except:
+                pass
+            if devmode:
+                print("Devmode enabled")
+                with open("temp.txt","w") as f:
+                    json.dump(beatmap,f,indent=4)
+                    
+            #print(beatmap)
+        except Exception as e:
+            print("Error: Info.dat not found (did you add a beatmap?)")
+            print(path+"/"+beatfile)
+            return
+        try:
+            v=beatmap["version"]
         except:
-            pass
-        if devmode:
-            print("Devmode enabled")
-            with open("temp.txt","w") as f:
-                json.dump(beatmap,f,indent=4)
-                
-        #print(beatmap)
-    except Exception as e:
-        print("Error: Info.dat not found (did you add a beatmap?)")
-        print(path+"/"+beatfile)
-        return
-    try:
-        v=beatmap["version"]
-    except:
-        v=beatmap["_version"]
-    if v.startswith("2."):
-        beatmap=convert(beatmap)
-        print("Updated beatmap to version 3.0.0")
-        print(len(beatmap["colorNotes"]),"notes found")
+            v=beatmap["_version"]
+        if v.startswith("2."):
+            beatmap=convert(beatmap)
+            print("Updated beatmap to version 3.0.0")
+            print(len(beatmap["colorNotes"]),"notes found")
 
-    indicator=0
+        indicator=0
 
-  
-    #load the music
-    try:
-        
-        pygame.mixer.init()
-        pygame.mixer.music.load(path+"/"+musicfile)
-        #set the volume
-        pygame.mixer.music.set_volume(0.05)
-        pygame.mixer.music.play()
-    except:
-        print("Audio disabled due to error.", end="\r")
-        time.sleep(2)
-        print("                            ", end="")
-    #start the map
-    starttime=time.time()
-    last=beatmap["colorNotes"][0]
+    
+        #load the music
+        try:
+            
+            pygame.mixer.init()
+            pygame.mixer.music.load(path+"/"+musicfile)
+            #set the volume
+            pygame.mixer.music.set_volume(0.05)
+            pygame.mixer.music.play()
+        except:
+            print("Audio disabled due to error.", end="\r")
+            time.sleep(2)
+            print("                            ", end="")
+        #start the map
+        starttime=time.time()
+        last=beatmap["colorNotes"][0]
 
-    for i in beatmap["colorNotes"]:
-        t=i["b"]
-        seconds=t*60/bpm
-        e=pygame.event.get()
-        for f in e:
-            if f.type==pygame.QUIT:
-                pygame.mixer.music.stop()
-                pygame.quit()
+        for i in beatmap["colorNotes"]:
+            t=i["b"]
+            seconds=t*60/bpm
+            while starttime+seconds-1>time.time():
+                time.sleep(0.1)
+                if pyUpdate():
+                    return
+            if starttime+seconds>time.time():
+                time.sleep(starttime+seconds-time.time())
+            draw(i,last)
+            last=i
+            if pyUpdate():
                 return
-        if starttime+seconds>time.time():
-            time.sleep(starttime+seconds-time.time())
-        draw(i,last)
-        last=i
-    while pygame.mixer.music.get_busy():
-        time.sleep(0.1)
-    pygame.mixer.music.stop()
-    pygame.quit()
-    return
-
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.1)
+        pygame.mixer.music.stop()
+        pygame.quit()
+        return
+    except:
+        pygame.mixer.music.stop()
+        pygame.quit()
+        return
         
 if __name__ == "__main__":
     play("beatmap")
