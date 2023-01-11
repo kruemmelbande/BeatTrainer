@@ -124,9 +124,9 @@ def convertLoaded(difficulty,saveLocation):
         with open(saveLocation+"/Info.dat","w") as f:
             json.dump(newInfo,f,indent=2)
         with open(saveLocation+"/StandartEasy.dat","w") as f:
-            json.dump(easy,f)
+            json.dump(easy,f,separators=(',', ':'))
         with open(saveLocation+"/StandartNormal.dat","w") as f:
-            json.dump(normal,f)
+            json.dump(normal,f,separators=(',', ':'))
         with open(saveLocation+"/"+newInfo["_songFilename"], "wb") as f:
             f.write(song.read())
         with open(saveLocation+"/"+newInfo["_coverImageFilename"], "wb") as f:
