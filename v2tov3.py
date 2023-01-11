@@ -5,6 +5,7 @@ def convert(map):
     notes=map["_notes"]
     #sliders obstacles bombs and waypoints are not supported at this time
     newNotes=[]
+    bombs=[]
     for i in notes:
         note={
             "b": i["_time"],
@@ -18,6 +19,12 @@ def convert(map):
             note["c"]=0
         elif i["_type"]==1:
             note["c"]=1
+        elif i["_type"]==3:
+            bombs.append({
+                "b":i["_time"],
+                "x": i["_lineIndex"],
+                "y": i["_lineLayer"]        
+            })
         else:
             continue
         if "_customData" in i:
@@ -56,7 +63,7 @@ def convert(map):
         "bpmEvents": [],
         "rotationEvents": [],
         "colorNotes": newNotes,
-        "bombNotes": [],
+        "bombNotes": bombs,
         "obstacles": obstacles,
         "sliders": [],
         "burstSliders": [],
