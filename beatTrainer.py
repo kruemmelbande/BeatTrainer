@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, Scale
-from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path
-
+from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path, isUpdated, getInfo, saveUpdated
+import os
 from beatPlayer import play
 
 def playBeatmap():
@@ -29,6 +29,10 @@ def on_load_button_click():
         img_label = tk.Label(root, image=img)
         img_label.image = img
         img_label.grid(row=0, column=1, sticky='W')
+        if isUpdated():
+            update_button['state'] = 'normal'
+        else:
+            update_button['state'] = 'disable'
 
 
 
@@ -50,7 +54,14 @@ def on_clear_button_click():
     convert_button['state'] = 'disable'
     clear_button['state'] = 'disable'
     play_button['state'] = 'disable'
+    update_button['state'] = 'disable'
     beatmap_label.config(text="No beatmap loaded")
+
+def on_update_button_click():
+    #get file path for update
+    filepath=filedialog.askdirectory()
+    saveUpdated(filepath)
+    
 
 root = tk.Tk()
 root.title("BeatTrainer")
@@ -79,5 +90,9 @@ clear_button['state'] = 'disable'
 play_button = tk.Button(root, text="Preview Beatmap", command=playBeatmap)
 play_button.grid(row=5, column=0,sticky='W')
 play_button['state'] = 'disable'
+
+update_button = tk.Button(root, text="Update", command=on_update_button_click)
+update_button.grid(row=6, column=0,sticky='W')
+update_button['state'] = 'disable'
 
 root.mainloop()

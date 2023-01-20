@@ -1,9 +1,12 @@
 import json,os
 from PIL import Image, ImageTk
+from v2tov3 import convert
+
 currentBeatmap={}
 beemaps=[]
 song=None
 cover=None
+updated=0
 def makeCopy(list):
     newList={}
     for i in list:
@@ -29,9 +32,18 @@ def getBeatmapName():
         return str(info["_songName"]+"\n"+info["_songSubName"]+"\n"+info["_songAuthorName"]+"\n"+info["_levelAuthorName"])
     except:
         return "No beatmap loaded"
+
+def getBeatmapNames():
+    global info
+    for i in info["_difficultyBeatmapSets"]:
+        if i["_beatmapCharacteristicName"]=="Standard":
+            info["_difficultyBeatmapSets"]=[i]
+            break
+    return [i["_beatmapFilename"] for i in info["_difficultyBeatmapSets"][0]["_difficultyBeatmaps"]]
+
 def loadbeatmap(filepath):
     try:
-        global beemaps,info,song,cover, thumbnail, path
+        global beemaps,info,song,cover, thumbnail, path,v, updated
         beemaps={}
         path=filepath
         with open(filepath+"/Info.dat","r") as f:
@@ -47,23 +59,7 @@ def loadbeatmap(filepath):
         thumbnail=Image.open(filepath+"/"+info["_coverImageFilename"])
         song=open(filepath+"/"+info["_songFilename"],"rb")
         cover=open(filepath+"/"+info["_coverImageFilename"],"rb")
-        return 0
-    except:
-        return 1
-def getLoadedDifficulties():
-    return [i for i in beemaps]
-
-def clearLoaded():
-    global currentBeatmap,beemaps,song,cover
-    currentBeatmap={}
-    beemaps=[]
-    song=None
-    cover=None
-
-def convertLoaded(difficulty,saveLocation):
-    try:
-        global beemaps,currentBeatmap,info
-        currentBeatmap=beemaps[difficulty]
+        currentBeatmap=beemaps[[i for i in beemaps][0]]
         try:
             v=currentBeatmap["version"]
         except:
@@ -73,8 +69,60 @@ def convertLoaded(difficulty,saveLocation):
                 print("Couldnt determine version of map (trying to continue anyway)")
                 v="3.0.0"
         if v.startswith("2."):
-            from v2tov3 import convert
+            
             currentBeatmap=convert(currentBeatmap)
+            updated=1
+        else:
+            updated=0
+        return 0
+    except Exception as e:
+        print(e)
+        return 1
+    
+def getLoadedDifficulties():
+    return [i for i in beemaps]
+
+def getInfo():
+    global info
+    return info
+
+def clearLoaded():
+    global currentBeatmap,beemaps,song,cover
+    currentBeatmap={}
+    beemaps=[]
+    song=None
+    cover=None
+
+def isUpdated():
+    global updated
+    return updated
+
+def saveUpdated(filepath):
+    try:
+        oldfiles=get_current_file_path()
+        #copy files from old to new
+        for i in os.listdir(oldfiles):
+            if i not in os.listdir(filepath):
+                with open(os.path.join(filepath,i),'wb') as f:
+                    with open(os.path.join(oldfiles,i),'rb') as g:
+                        f.write(g.read())
+        beatmapnames=getBeatmapNames()
+        for beatmap in beatmapnames:
+            oldbeatmap=json.load(open(os.path.join(oldfiles,beatmap),'r'))
+            newbeatmap=convert(oldbeatmap)
+            with open(os.path.join(filepath,beatmap),'w') as f:
+                f.write(json.dumps(newbeatmap,separators=(',', ':')))
+    except Exception as e:
+        print("Failed to update beatmap. Either the beatmap is already updated or the beatmap is corrupted.")
+        print(e)
+        print("line:",e.__traceback__.tb_lineno)
+
+def convertLoaded(difficulty,saveLocation):
+    try:
+        global beemaps,currentBeatmap,info,updated,v
+        updated=0 
+        
+        print(updated)
         lefts=[]
         rights=[]
         easy={}
@@ -136,4 +184,4 @@ def convertLoaded(difficulty,saveLocation):
     except:
         return 1
 if __name__ == "__main__":
-    print("This is a library, not a program. Run beatTrainer.py instead.")
+    print("This is the backend, and cannot be run directly.")

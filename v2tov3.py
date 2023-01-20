@@ -76,6 +76,7 @@ def convert(map):
         "useNormalEventsAsCompatibleEvents": False
     }
     return newMap
+
 if __name__=="__main__":
     with open("beatmap/Info.dat","r") as f:
         info = json.load(f)
