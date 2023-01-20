@@ -25,6 +25,7 @@ def convert(map):
                 "x": i["_lineIndex"],
                 "y": i["_lineLayer"]        
             })
+            continue
         else:
             continue
         if "_customData" in i:
