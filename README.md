@@ -9,7 +9,7 @@ If you are cloning this repository, install the dependencies with `pip install -
 The executable from the releases tab should in theory include all dependencies.
 ## Usage
 
-Either clone this repository and run `python main.py` or download the latest release from the releases tab and run the executable (it might not be up to date).
+Either clone this repository and run `python beatTrainer.py` or download the latest release from the releases tab and run the executable (it might not be up to date).
 
 Then just load a beatmap through the gui, choose your difficulty and either export it to a new beatmap for training, or preview the current map.
 
