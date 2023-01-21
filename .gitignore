@@ -130,7 +130,6 @@ dmypy.json
 beatmap/*
 devmode.txt
 temp.txt
-beatmap.*
-!beatmap/PlaceYourBeatmapHere
-
+beatmap*
+settings.json
 ```
