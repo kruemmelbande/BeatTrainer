@@ -56,6 +56,7 @@ def on_clear_button_click():
     play_button['state'] = 'disable'
     update_button['state'] = 'disable'
     beatmap_label.config(text="No beatmap loaded")
+    img_label.image = None
 
 def on_update_button_click():
     #get file path for update
