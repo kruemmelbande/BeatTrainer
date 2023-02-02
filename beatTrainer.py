@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import filedialog, Scale
-from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path, isUpdated, getInfo, saveUpdated
+from tkinter import filedialog
+from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path, isUpdated, saveUpdated
 from beatPlayer import play
 
 def playBeatmap():
