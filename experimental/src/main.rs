@@ -2,7 +2,19 @@ use std::process::exit;
 use serde_json;
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    if args.len() < 2{
+        println!("no map specified");
+        exit(1);
+    }else if args.len() <3{
+        println!("Invalid arguments");
+        exit(1);
+    }
     let folder_location = &args[1];
+    //check if folder exists
+    if !std::path::Path::new(folder_location).exists() {
+        println!("The folder {} does not exist", folder_location);
+        exit(1);
+    }
     let folder = std::fs::read_dir(folder_location).unwrap();
     let mut info_path = String::new();
 //    println!("The folder {} the following files:", folder_location);
@@ -53,8 +65,35 @@ fn get_info(info_json: serde_json::Value) {
     json.insert(String::from("_songSubName"), c.get("_songSubName").unwrap().clone());
     //version
     json.insert(String::from("_version"), c.get("_version").unwrap().clone());
-    let json = serde_json::Value::Object(json);
+    let mut json = serde_json::Value::Object(json);
+    //get the difficulties
+    let difficulties = c.get("_difficultyBeatmapSets").unwrap().as_array().unwrap();
+    //get the difficulties from the first set
+    //println!("difficulties: {}", serde_json::to_string_pretty(&difficulties).unwrap());
+    let mut category = serde_json::Value::Null;
+    for cat in difficulties.iter() {
+        //search for the "Standart" beatmap category
+        //println!("difficulty: {}", serde_json::to_string_pretty(&cat).unwrap());
+        if  cat.as_object().unwrap().get("_beatmapCharacteristicName").unwrap().as_str().unwrap() == "Standard" {
+            //get the category 
+            category = cat.clone();
+            break;
+        }
+    }
+    if category == serde_json::Value::Null {
+        println!("No standard difficulty found");
+        exit(1);
+    }
+    //difficulty now sotres the standard category. We now need to get all the difficulties from the category, and also the file name
+    let mut difficulties = Vec::new();
+    for d in category.as_object().unwrap().get("_difficultyBeatmaps").unwrap().as_array().unwrap() {
+        let mut dif= serde_json::Map::new();
+        dif.insert(String::from("difficulty"), d.as_object().unwrap().get("_difficulty").unwrap().clone());
+        dif.insert(String::from("file"), d.as_object().unwrap().get("_beatmapFilename").unwrap().clone());
+        difficulties.push(serde_json::Value::Object(dif));
 
+    }
+    json.as_object_mut().unwrap().insert(String::from("difficulties"), serde_json::Value::Array(difficulties));
     //format json
     let json = serde_json::to_string_pretty(&json).unwrap();
     println!("{}", json);
