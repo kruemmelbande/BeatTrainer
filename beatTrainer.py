@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog
-from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path, isUpdated, saveUpdated
+from beatTrainerCore import loadbeatmap, convertLoaded, getLoadedDifficulties, clearLoaded, getBeatmapName, getThumbnail, get_current_file_path, isUpdated, saveUpdated, has_bpm_events
 from beatPlayer import play
 
 def playBeatmap():
+    if has_bpm_events():
+        tk.messagebox.showinfo("BeatTrainer", "This beatmap might contain BPM events, which are not handled at this point. The audio might be out of sync with the notes.")
     play(get_current_file_path(), difficulty=difficulty_var.get())
 
 def on_load_button_click():

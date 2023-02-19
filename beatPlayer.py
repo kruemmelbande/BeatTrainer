@@ -30,7 +30,7 @@ def draw(colorNote,last, consoleversion=False):
     beatsPerIndicator=20
     
     dirs[colorNote["x"]][colorNote["y"]]=colorNote["d"]
-    if colorNote["b"]-last["b"]<60/bpm/256:
+    if colorNote["b"]-last["b"]<=1/16:
         indicator=(indicator+1)%(beatsPerIndicator*2) 
 
         board[colorNote["x"]][colorNote["y"]]=colorNote["c"]+1
@@ -160,8 +160,8 @@ def play(path, consoleversion=False, difficulty=0):
             v=beatmap["_version"]
         if v.startswith("2."):
             beatmap=convert(beatmap)
-            print("Updated beatmap to version 3.0.0")
-            print(len(beatmap["colorNotes"]),"notes found")
+            #print("Updated beatmap to version 3.0.0")
+            #print(len(beatmap["colorNotes"]),"notes found")
 
         indicator=0
 

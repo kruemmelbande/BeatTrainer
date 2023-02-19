@@ -17,6 +17,13 @@ def get_current_file_path():
     global path
     return path
 
+def has_bpm_events():
+    global currentBeatmap
+    if "bpmEvents" in currentBeatmap:
+        if len(currentBeatmap["bpmEvents"])>0:
+            return True
+    return False
+
 def getThumbnail():
     global thumnail
     try:
